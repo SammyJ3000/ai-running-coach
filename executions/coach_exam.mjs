@@ -7,8 +7,11 @@
 //   node executions/coach_exam.mjs --round 2 --retest 1 --random 10 failures of round 1 + 10 random passes
 //   node executions/coach_exam.mjs --round 3 --only E2,E6          just these
 //   node executions/coach_exam.mjs --report                       rebuild the results file, no API calls for questions
-//   options: --base http://localhost:4322  --key local-dev  --judge claude-opus-5-5  --concurrency 4  --seed 7
+//   options: --base http://localhost:4322  --key local-dev  --judge claude-sonnet-5-5  --concurrency 4  --seed 7
 //            --exam evals/exam.md (one or more files, comma separated)
+//
+// The judge model: --judge, else JUDGE_MODEL (environment or .env), else judge_model in config.json. It defaults to a
+// different model from the coach, so the coach is not marking its own answers.
 //
 // Writes evals/runs/round-N.json (raw), rewrites evals/exam-results.md, appends to evals/exam-log.md.
 // Needs the dev server running with a real ANTHROPIC_API_KEY (the judge reads the key from the environment or .env
@@ -26,7 +29,6 @@ const arg = (k, d) => { const i = process.argv.indexOf('--' + k); return i > 0 ?
 const BASE = arg('base', 'http://localhost:4322');
 const APP_KEY = arg('key', 'local-dev');
 const CONFIG = JSON.parse(fs.readFileSync(path.join(ROOT, 'config.json'), 'utf8'));
-const JUDGE = arg('judge', CONFIG.coach_model);
 const CONC = Number(arg('concurrency', 4));
 const ROUND = Number(arg('round', 1));
 const ATTEMPTS = 3;         // tries per coach or judge call
@@ -38,15 +40,17 @@ const PRICE = { 'claude-opus-5-5': [4, 20, 5, 0.2], 'claude-sonnet-5-5': [2, 10,
 const cost = (model, u) => { const p = PRICE[model] || PRICE['claude-opus-5-5']; if (!u) return 0;
   return ((u.input_tokens || 0) * p[0] + (u.output_tokens || 0) * p[1] + (u.cache_creation_input_tokens || 0) * p[2] + (u.cache_read_input_tokens || 0) * p[3]) / 1e6; };
 
-// --- the judge's key, loaded like dev-server.js does (never printed) ---
+// --- the judge's key and model, loaded like dev-server.js does (the key is never printed); the environment wins over .env ---
 const envFile = path.join(ROOT, '.env');
-if (!process.env.ANTHROPIC_API_KEY && fs.existsSync(envFile)) {
+if (fs.existsSync(envFile)) {
   for (const line of fs.readFileSync(envFile, 'utf8').split('\n')) {
-    const m = line.match(/^\s*(ANTHROPIC_API_KEY)\s*=\s*(.*)\s*$/);
-    if (m && m[2]) process.env[m[1]] = m[2].replace(/^["']|["']$/g, '');
+    const m = line.match(/^\s*(ANTHROPIC_API_KEY|JUDGE_MODEL)\s*=\s*(.*)\s*$/);
+    if (m && m[2] && !process.env[m[1]]) process.env[m[1]] = m[2].replace(/^["']|["']$/g, '');
   }
 }
 if (!process.env.ANTHROPIC_API_KEY) { console.error('No ANTHROPIC_API_KEY for the judge.'); process.exit(1); }
+const JUDGE = arg('judge', process.env.JUDGE_MODEL || CONFIG.judge_model || CONFIG.coach_model);
+if (JUDGE === CONFIG.coach_model) console.warn(`Note: the judge (${JUDGE}) is the same model as the coach, so it is grading its own answers.`);
 
 // --- parse the exams (deterministic) ---
 // Each exam file gets a one-letter ID prefix from its position: E for the first, then F, G and so on.

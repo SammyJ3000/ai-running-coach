@@ -78,6 +78,7 @@ The playbook is the first system block, with a cache breakpoint, and it is byte 
 
 - It sends each exam question through the same endpoint the app uses (`POST /api/coach { action: 'ask' }`), so it tests the real prompts, playbook and context, not a copy.
 - A separate judge call grades each answer against a model answer and the reference material (the playbook, the runner's profile, the form analysis and `lib/rules.js`). It scores four things, each 0 or 1: correct, cites the right source, no invented facts, and knee safe. A pass needs correct, no invented facts and knee safe.
+- The judge is a different model from the coach by default (`judge_model` in `config.json`, or `JUDGE_MODEL` in the environment or `.env`), so the coach never marks its own answers.
 - Hallucination traps ask about rules, studies or workouts that don't exist. A good answer says it doesn't know rather than making something up.
 - Retest rounds rerun last round's failures plus a seeded random sample of earlier passes, so a fix to the playbook can't quietly break something that used to work.
 - It tracks cost per call from the token usage, including cache writes and reads, and logs API errors separately so they never count as wrong answers.
@@ -127,7 +128,7 @@ npm start                     # node executions/dev-server.js, http://localhost:
 
 Without an `APP_KEY` in `.env`, the dev server uses a local passphrase and hands it to the page, so it opens straight away. Data is saved as JSON in `tmp/store/`. Add a run by hand on the Runs tab, check in on the knee, then write a plan. Plans, reviews and questions call the Anthropic API and cost credits.
 
-To use your own runner, edit the `goal` block in `config.json`. The model is set there too (`coach_model`).
+To use your own runner, edit the `goal` block in `config.json`. The models are set there too (`coach_model`, and `judge_model` for the eval judge).
 
 ### Tests and lint
 

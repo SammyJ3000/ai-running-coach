@@ -1,6 +1,7 @@
 {
-  "_note": "The coach model lives here, not in code. The runner below is a fictional example: replace the goal block with your own.",
+  "_note": "The coach and eval judge models live here, not in code. The judge is a different model from the coach by default, so the coach is not marking its own work. The runner below is a fictional example: replace the goal block with your own.",
   "coach_model": "claude-opus-5-5",
+  "judge_model": "claude-sonnet-5-5",
   "goal": {
     "runner": "Alex (fictional example runner)",
     "event": "5K",
