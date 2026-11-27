@@ -2,6 +2,8 @@
 
 I built a personal running coach to get myself back to my 5K best after a knee injury. It reads my runs from Apple Health, measures my running form from phone video, and uses Claude to write a two week plan, review each run and answer questions. The model writes the plan, but it never has the last word on safety: deterministic knee rules in code check every session before I see it. An LLM as judge eval harness tests the coach for wrong answers and invented facts. It is a phone web app with no build step, two serverless functions and a local Python vision pipeline.
 
+![AI running coach on a phone: today's session, the two week plan and the running form screen, all with a fictional runner's data](docs/images/preview.png)
+
 The runner profile in this repo (Alex) is fictional. This is a personal project, not medical advice. If you are coming back from an injury, follow your physio.
 
 ## How it works
