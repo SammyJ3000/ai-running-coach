@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// Local preview: serves index.html and runs api/*.js the way Vercel does. Reads .env if there is one.
+// Local preview: serves the static app (index.html, css/, js/) and runs api/*.js the way Vercel does. Reads .env if there is one.
 //   node executions/dev-server.js   -> http://localhost:4322 (PORT to change it)
 const http = require('http');
 const fs = require('fs');
@@ -7,7 +7,7 @@ const path = require('path');
 
 const ROOT = path.join(__dirname, '..');
 const PORT = Number(process.env.PORT || 4322);
-const TYPES = { '.html': 'text/html; charset=utf-8', '.js': 'text/javascript', '.json': 'application/json', '.woff2': 'font/woff2', '.png': 'image/png', '.svg': 'image/svg+xml', '.mp4': 'video/mp4', '.webmanifest': 'application/manifest+json', '.jpg': 'image/jpeg', '.css': 'text/css' };
+const TYPES = { '.html': 'text/html; charset=utf-8', '.js': 'text/javascript', '.json': 'application/json', '.woff2': 'font/woff2', '.png': 'image/png', '.svg': 'image/svg+xml', '.mp4': 'video/mp4', '.webmanifest': 'application/manifest+json', '.jpg': 'image/jpeg', '.css': 'text/css', '.jsx': 'text/javascript' };
 
 const envFile = path.join(ROOT, '.env');
 if (fs.existsSync(envFile)) {

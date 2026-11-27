@@ -1,7 +1,7 @@
 {
   "name": "ai-running-coach",
   "private": true,
-  "description": "Personal AI running coach: index.html + serverless functions. No build step.",
+  "description": "Personal AI running coach: a static React app and serverless functions. No build step.",
   "engines": {
     "node": ">=22"
   },
