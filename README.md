@@ -172,7 +172,7 @@ It was built for 1920 x 1080 iPhone slow motion clips (about four times slowed a
 
 The app runs on Vercel. Link the folder with `vercel link`, connect a private Blob store, put your keys in `.env` and run `bash executions/push_env.sh` to copy them to the project without printing them, then deploy. `.vercelignore` keeps the eval, form and helper scripts out of the deployment, and `vercel.json` blocks the prompts, `lib/` and config from being served.
 
-To send runs from an iPhone, build the Shortcut in `shortcut-steps.md`.
+To send runs from an iPhone, build the Shortcut in [docs/iphone-shortcut.md](docs/iphone-shortcut.md).
 
 ### API
 

@@ -4,6 +4,6 @@
     "api/runs.js": { "includeFiles": "{config.json,lib/**}" }
   },
   "routes": [
-    { "src": "/(prompts|lib|form/.*\\.json$|config\\.json|package\\.json|vercel\\.json|shortcut-steps\\.md).*", "status": 404, "dest": "/404" }
+    { "src": "/(prompts|lib|form/.*\\.json$|config\\.json|package\\.json|vercel\\.json|docs/).*", "status": 404, "dest": "/404" }
   ]
 }

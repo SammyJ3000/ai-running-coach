@@ -1,5 +1,6 @@
 # Only the app goes live.
 /README.md
+/docs
 /eslint.config.mjs
 .github
 tests
