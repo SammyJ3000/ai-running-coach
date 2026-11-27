@@ -1,0 +1,8 @@
+# Lint settings for the form analysis scripts. Run from this folder: ruff check .
+[tool.ruff]
+target-version = "py312"
+line-length = 140
+
+[tool.ruff.lint]
+# pycodestyle errors and warnings, Pyflakes, import order, pyupgrade.
+select = ["E", "W", "F", "I", "UP"]

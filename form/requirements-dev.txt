@@ -1,0 +1,2 @@
+# Lint tools for the form scripts (CI installs these; the pipeline itself needs requirements.txt).
+ruff==0.17.6

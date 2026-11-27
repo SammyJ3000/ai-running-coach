@@ -1,0 +1,29 @@
+{
+  "date": "1 Jan 2027",
+  "source": "Fictional example output. In real use form/out/summary.json is written from your own clips and takes priority over this file. 2D estimate from phone video, not a clinical gait analysis.",
+  "video": null,
+  "still": null,
+  "cues": [
+    { "cue": "Take quicker, shorter steps: 166 to 172 a minute",
+      "feel": "Light and quick under you. A watch or phone metronome helps.",
+      "why": "You're at about 158. A small rise in step rate usually shortens the stride and lowers the load on the knee." },
+    { "cue": "Land with your foot under your knee",
+      "feel": "The foot lands under you, not out in front. It mostly comes for free with quicker steps.",
+      "why": "Your shin is a few degrees forward when you land, a mild overstride. Don't force a forefoot strike." },
+    { "cue": "Stay tall with a slight lean from the ankles",
+      "feel": "Tall, falling forward a touch, not bending at the waist.",
+      "why": "Your trunk is close to upright, which is fine. Keep it that way as the pace rises." }
+  ],
+  "metrics": [
+    { "name": "Cadence", "value": "158 spm", "ref": "aim 166–172" },
+    { "name": "Ground contact", "value": "330 ms", "ref": "walking-pad pace" },
+    { "name": "Knee bend at landing", "value": "16°", "ref": "healthy" },
+    { "name": "Knee bend, mid-stance", "value": "43°", "ref": "about 45° normal" },
+    { "name": "Shin at landing", "value": "+6°", "ref": "aim about 0°" },
+    { "name": "Heel ahead of hip", "value": "23% of leg", "ref": "lower is better" },
+    { "name": "Trunk lean", "value": "3.9°", "ref": "healthy" },
+    { "name": "Left vs right", "value": "even", "ref": "symmetrical" },
+    { "name": "Feet and arms crossing", "value": "none", "ref": "good" },
+    { "name": "Hip drop", "value": "unclear", "ref": "film from behind" }
+  ]
+}

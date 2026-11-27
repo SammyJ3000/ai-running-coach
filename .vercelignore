@@ -1,0 +1,23 @@
+# Only the app goes live.
+/README.md
+/eslint.config.mjs
+.github
+tests
+executions
+evals
+tmp
+form/.venv
+form/*.py
+form/*.sh
+form/requirements*.txt
+form/pyproject.toml
+form/models
+form/fonts
+form/out/*.mp4
+form/out/*.png
+form/out/*.csv
+form/out/*.npz
+.env*
+node_modules
+inputs
+.ruff_cache

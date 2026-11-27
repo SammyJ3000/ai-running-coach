@@ -1,0 +1,24 @@
+# Secrets
+.env*
+!.env.example
+
+# Dependencies and tool caches
+node_modules
+.vercel
+.ruff_cache
+__pycache__
+form/.venv
+
+# Local data and generated output
+tmp
+inputs
+form/out
+form/models
+form/fonts
+evals/runs
+evals/exam-log.md
+evals/exam-results.md
+*.log
+
+# OS
+.DS_Store

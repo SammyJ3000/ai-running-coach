@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">
+<!-- Coach home-screen icon. Bend: the C of Coach as two track lanes cut on the slanted start line. Full-bleed square; iOS rounds the corners. -->
+<defs><radialGradient id="g-icon" cx="0.2" cy="0.05" r="1.1"><stop offset="0" stop-color="#1D2019"/><stop offset="1" stop-color="#0D0E0C"/></radialGradient></defs>
+<rect width="1024" height="1024" fill="#0D0E0C"/><rect width="1024" height="1024" fill="url(#g-icon)"/>
+<defs><clipPath id="cut-icon"><polygon points="0,0 887.7,0 632.3,1024 0,1024"/></clipPath>
+<linearGradient id="lit-icon" gradientUnits="userSpaceOnUse" x1="200" y1="160" x2="760" y2="880"><stop offset="0" stop-color="#EEFF86"/><stop offset="0.5" stop-color="#E1FF45"/><stop offset="1" stop-color="#D2F02C"/></linearGradient></defs>
+<g id="mark" fill="none" stroke="#E1FF45" stroke-width="92" clip-path="url(#cut-icon)"><path d="M1100 236 H522 A276 276 0 0 0 522 788 H1100"/><path d="M1100 398 H522 A114 114 0 0 0 522 626 H1100"/></g></svg>

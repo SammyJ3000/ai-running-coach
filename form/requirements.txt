@@ -1,0 +1,5 @@
+# Form analysis (run locally, not deployed). Versions are the ones the pipeline was built and run with.
+mediapipe==1.2.3
+numpy==2.5.5
+opencv-python==5.1.0.95
+pillow==13.0.0
