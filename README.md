@@ -114,7 +114,7 @@ These come from the project's build log and eval log.
 - **The real playbook.** The coach's private playbook was distilled from published running books, so it is not included. `prompts/playbook.md` is a short placeholder in my own words with general running guidance. Swap in your own.
 - **The real exam.** Those questions were written from the same books. `evals/exam.md` has seven original example questions in the same format, including two hallucination traps, so the harness still runs.
 - **Personal data.** No real runs, health data, gait videos or landmarks. `config.json` and `form/example-summary.json` are fictional examples.
-- **Design and video tooling.** Screenshot, screen recording and icon sheet scripts used for the build video.
+- **Design tooling.** The screenshot and icon sheet scripts I used while designing the app.
 
 ## Setup and run
 
