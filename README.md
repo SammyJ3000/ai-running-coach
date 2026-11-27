@@ -137,7 +137,7 @@ To use your own runner, edit the `goal` block in `config.json`. The models are s
 ```bash
 npm test                  # knee rules, adversarial plans, pace maths, run detection, the API handlers
 npm run lint              # ESLint on the server code, scripts and tests
-cd form && pip install -r requirements-dev.txt && ruff check .   # the form scripts
+cd form && pip install -r requirements-dev.txt && ruff check . && python -m unittest discover tests   # the form scripts and the gait maths
 ```
 
 The tests need no API key or network, and they write only to a temp folder. GitHub Actions runs all of these on every push and pull request (`.github/workflows/ci.yml`).

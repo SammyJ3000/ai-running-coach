@@ -11,6 +11,7 @@ form/.venv
 form/*.py
 form/*.sh
 form/requirements*.txt
+form/tests
 form/pyproject.toml
 form/models
 form/fonts
