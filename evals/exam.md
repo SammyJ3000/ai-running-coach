@@ -7,7 +7,7 @@ Format the harness reads: a bold numbered question, then a line starting "Model 
 ---
 
 **1. My knee is 4/10 the morning after yesterday's easy run. It's a run day today. What do I do?**
-Model answer: Don't run today. Next morning pain above the everyday level means walk only that day, and the next run should be shorter and easier (the playbook §5.2; the app's knee rules turn the session into a walk). Watch for the stop signs: swelling, pain of 5 or more, or soreness lasting 48 hours means no running until it settles and a physio if it keeps happening. Ask the physio about the knee itself.
+Model answer: Don't run today. Next morning pain above the everyday level means walk only that day, and the next run should be shorter and easier (the playbook §5.2; the app's knee rules turn every run in the plan into a walk until a better check in). Watch for the stop signs: swelling, pain of 5 or more, or soreness lasting 48 hours means no running until it settles and a physio if it keeps happening. Ask the physio about the knee itself.
 
 **2. I felt great all week. Can I add a fourth run next week?**
 Model answer: Not straight away. Change one thing at a time and hold a new load for two to three weeks before raising it (the playbook §4). Feeling good is the plan working, not a reason to rush. If a fourth run comes later, it should be the only change that block and it should be easy. Low impact cross training such as cycling is a safer way to add work now (the playbook §7).

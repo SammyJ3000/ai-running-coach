@@ -84,6 +84,8 @@ The playbook is the first system block, with a cache breakpoint, and it is byte 
 - It tracks cost per call from the token usage, including cache writes and reads, and logs API errors separately so they never count as wrong answers.
 - Each round writes raw answers to `evals/runs/`, a line to `evals/exam-log.md`, and a full table to `evals/exam-results.md`.
 
+There is also a plan level eval that needs no API key and runs in CI: `evals/adversarial-plans.js` is a set of plans built to break the knee rules (a tempo run labelled as cross training, a three hour run in minutes only, running after a bad knee check in and so on), and `tests/adversarial-plans.test.js` checks that `enforce()` brings every one back inside the rules, using its own copy of the rules. `evals/README.md` explains both.
+
 ### The vision pipeline
 
 The form analysis uses MediaPipe Pose Landmarker (heavy model) on every frame of an iPhone slow motion clip filmed on a walking pad:
@@ -133,7 +135,7 @@ To use your own runner, edit the `goal` block in `config.json`. The models are s
 ### Tests and lint
 
 ```bash
-npm test                  # smoke tests: knee rules, pace maths, run detection, the API handlers
+npm test                  # knee rules, adversarial plans, pace maths, run detection, the API handlers
 npm run lint              # ESLint on the server code, scripts and tests
 cd form && pip install -r requirements-dev.txt && ruff check .   # the form scripts
 ```
