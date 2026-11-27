@@ -17,6 +17,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { parseModelJson } from '../lib/modeljson.js';
 
 const ROOT = path.join(path.dirname(fileURLToPath(import.meta.url)), '..');
 const EVALS = path.join(ROOT, 'evals');
@@ -102,6 +103,10 @@ Score four things, each 1 (yes) or 0 (no):
 Then list any invented or unsupported claims (quote them briefly), and give a one-sentence verdict.
 Reply with JSON only: {"correct":0|1,"cites_source":0|1,"no_invented_facts":0|1,"knee_safe":0|1,"invented":["..."],"verdict":"..."}`;
 
+// The judge's reply must have every score as 0 or 1.
+const SCORES = ['correct', 'cites_source', 'no_invented_facts', 'knee_safe'];
+const validateGrade = (g) => SCORES.filter((k) => g[k] !== 0 && g[k] !== 1).map((k) => `${k} must be 0 or 1`);
+
 async function judge(q, answer) {
   for (let attempt = 0; attempt < ATTEMPTS; attempt++) {
     const r = await fetch('https://api.anthropic.com/v1/messages', {
@@ -114,7 +119,7 @@ async function judge(q, answer) {
     const j = await r.json();
     if (!r.ok) { if (r.status === 429 || r.status >= 500) { await sleep(BACKOFF_MS * (attempt + 1)); continue; } throw new Error(j.error?.message || r.status); }
     const t = (j.content || []).filter((c) => c.type === 'text').map((c) => c.text).join('');
-    try { return { ...JSON.parse(t.slice(t.indexOf('{'), t.lastIndexOf('}') + 1)), usage: j.usage }; } catch { if (attempt === ATTEMPTS - 1) throw new Error('judge reply not JSON'); }
+    try { return { ...parseModelJson(t, validateGrade), usage: j.usage }; } catch (e) { if (attempt === ATTEMPTS - 1) throw new Error('judge reply unusable: ' + e.message, { cause: e }); }
   }
   throw new Error('judge failed');
 }

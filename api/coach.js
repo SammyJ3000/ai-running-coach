@@ -10,7 +10,8 @@ const fs = require('fs');
 const path = require('path');
 const { keyOk } = require('../lib/auth');
 const { readJSON, writeJSON } = require('../lib/store');
-const { enforce, kneeStatus, longest30 } = require('../lib/rules');
+const { enforce, validatePlan, kneeStatus, longest30 } = require('../lib/rules');
+const { parseModelJson, ModelReplyError } = require('../lib/modeljson');
 const { numbers } = require('../lib/paces');
 const { mergeRuns, est5k } = require('../lib/runs');
 
@@ -48,7 +49,29 @@ async function claude(sys, user, maxTokens) {
   if (j.stop_reason === 'max_tokens') throw new Error('reply was cut short');
   return { text: (j.content || []).filter((c) => c.type === 'text').map((c) => c.text).join('').trim(), usage: j.usage || null };
 }
-const json = (t) => JSON.parse(t.slice(t.indexOf('{'), t.lastIndexOf('}') + 1));
+
+// Shape checks for the review and screenshot replies (the plan's is validatePlan in lib/rules.js). Each returns a list of problems.
+const isNum = (v) => v === undefined || v === null || (typeof v === 'number' && Number.isFinite(v));
+const isStr = (v) => v === undefined || v === null || typeof v === 'string';
+const strList = (v) => v === undefined || v === null || (Array.isArray(v) && v.every((x) => typeof x === 'string'));
+function validateReview(r) {
+  const p = [];
+  if (typeof r.headline !== 'string' || !r.headline.trim()) p.push('headline must be a string');
+  for (const k of ['went_well', 'work_on']) if (!strList(r[k])) p.push(`${k} must be a list of strings`);
+  for (const k of ['knee', 'change']) if (!isStr(r[k])) p.push(`${k} must be a string or null`);
+  if (!isNum(r.est_5k_secs)) p.push('est_5k_secs must be a number or null');
+  return p;
+}
+function validateRead(r) {
+  const p = [];
+  if (typeof r.is_run !== 'boolean') p.push('is_run must be true or false');
+  if (r.date != null && !(typeof r.date === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(r.date) && !Number.isNaN(Date.parse(r.date)))) p.push('date must be YYYY-MM-DD or null');
+  if (r.time != null && !(typeof r.time === 'string' && /^([01]\d|2[0-3]):[0-5]\d$/.test(r.time))) p.push('time must be HH:MM or null');
+  for (const k of ['km', 'secs', 'hr_avg', 'hr_max', 'cadence']) if (!isNum(r[k])) p.push(`${k} must be a number or null`);
+  if (r.splits != null && !Array.isArray(r.splits)) p.push('splits must be a list');
+  if (!isStr(r.notes)) p.push('notes must be a string or null');
+  return p;
+}
 
 module.exports = async (req, res) => {
   res.setHeader('Cache-Control', 'no-store');
@@ -70,7 +93,7 @@ module.exports = async (req, res) => {
     if (b.action === 'read') {
       const m = String(b.image || '').match(/^data:(image\/(?:png|jpeg|webp|gif));base64,(.+)$/);
       if (!m) return res.status(400).json({ error: 'send a screenshot' });
-      const got = json((await claude(prompt('read'), [{ type: 'image', source: { type: 'base64', media_type: m[1], data: m[2] } }, { type: 'text', text: 'Read this run.' }], 2000)).text);
+      const got = parseModelJson((await claude(prompt('read'), [{ type: 'image', source: { type: 'base64', media_type: m[1], data: m[2] } }, { type: 'text', text: 'Read this run.' }], 2000)).text, validateRead);
       if (!got.is_run || !(got.km > 0) || !(got.secs > 0)) return res.status(200).json({ error: "Couldn't read a run on that screenshot.", got });
       const date = got.date || today, start = new Date(`${date}T${got.time || '18:00'}:00Z`);
       const run = { id: start.toISOString(), date, start: start.toISOString(), end: new Date(+start + got.secs * 1000).toISOString(), km: got.km, secs: got.secs,
@@ -82,7 +105,8 @@ module.exports = async (req, res) => {
 
     if (b.action === 'plan') {
       const { text: raw } = await claude(system('plan'), 'Write my next two weeks starting tomorrow. Here is everything you know.\n\n' + JSON.stringify(context, null, 1), 16000);
-      const { plan, changes, knee } = enforce(json(raw), runs, checkins);
+      // The reply must parse and pass validatePlan before the knee rules run; a bad reply is never stored.
+      const { plan, changes, knee } = enforce(parseModelJson(raw, validatePlan), runs, checkins);
       const out = { plan, changes, knee, at: new Date().toISOString() };
       await writeJSON('coach/plan.json', out);
       return res.status(200).json(out);
@@ -95,7 +119,7 @@ module.exports = async (req, res) => {
       const planned = plan ? (plan.weeks || []).flatMap((w) => w.sessions || []).find((s) => s.date === run.date) : null;
       const { text: raw } = await claude(system('review'), 'Review this run.\n\n' + JSON.stringify({ ...context, run, planned, checkin: checkins.find((c) => c.runId === run.id || c.date === run.date) || null }, null, 1), 6000);
       const reviews = await readJSON('coach/reviews.json', {});
-      reviews[run.id] = { ...json(raw), at: new Date().toISOString() };
+      reviews[run.id] = { ...parseModelJson(raw, validateReview), at: new Date().toISOString() };
       await writeJSON('coach/reviews.json', reviews);
       return res.status(200).json({ runId: run.id, review: reviews[run.id] });
     }
@@ -108,6 +132,10 @@ module.exports = async (req, res) => {
     }
     return res.status(400).json({ error: 'unknown action' });
   } catch (err) {
+    if (err instanceof ModelReplyError) {
+      console.error('coach reply rejected:', err.message);
+      return res.status(502).json({ error: "The coach's reply could not be used. Try again." });
+    }
     console.error('coach failed', err);
     return res.status(500).json({ error: 'coach failed: ' + err.message });
   }
