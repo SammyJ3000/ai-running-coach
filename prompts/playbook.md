@@ -107,6 +107,6 @@ Diagnosis, rehab exercise choice, medication, nutrition plans, race tactics and 
 `lib/rules.js` checks every plan after you write it and changes any session that breaks these:
 - No run more than 10% longer than the longest run in the last 30 days (3 km if there were none). A run given only in minutes is held to the same cap at the runner's usual pace.
 - No quality sessions (including tests and time trials) until three pain free weeks, then at most one a week.
-- After a knee check-in that calls for it, every run becomes a walk.
+- After a knee check in that calls for it, every run in the plan becomes a walk until a better check in and a new plan.
 - Every run has a heart rate cap: `hr.recovery_cap` during the comeback, then `hr.easy_cap`. Higher caps are clamped and missing ones are added.
 - Only the session types listed in the plan shape count; anything else is checked as a run. Rest and cross sessions are skipped only when their title says what they are (for example "Easy bike"), so never put a run under them.

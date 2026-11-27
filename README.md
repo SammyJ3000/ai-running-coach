@@ -60,7 +60,7 @@ The coach writes the plan as JSON. Before it is saved, `enforce()` in `lib/rules
 - First, `validatePlan()` checks the shape: weeks of sessions, each with a date, a type and a title, and numbers (or nothing) for distance, minutes and heart rate cap. A reply that fails is rejected and never saved.
 - No run more than 10% longer than the longest run in the last 30 days, or 3 km if there were none. The check runs over real runs plus the plan's own earlier sessions, so the cap builds week by week inside the plan too. A run planned in minutes only is held to the same cap, turned into minutes at the runner's usual pace (the median of their last ten runs).
 - No quality sessions (tempo, intervals, hills, time trials and so on) until three pain free weeks, then at most one a week.
-- If the latest knee check in shows swelling, high pain, soreness that lasted 48 hours, or pain above the everyday baseline, every run that day becomes a walk.
+- If the latest knee check in shows swelling, high pain, soreness that lasted 48 hours, or pain above the everyday baseline, every run in the plan becomes a walk, not just that day's. This is deliberately cautious: the plan stays all walking until a better check in and a fresh plan.
 - Every run gets a heart rate cap: 76% of max during the comeback, then 79%. A higher cap is clamped and a missing one is added.
 - Only the session types in the plan prompt count. A session with any other type, or one labelled rest or cross training whose title reads as a run, is checked as a run.
 
