@@ -82,7 +82,7 @@ module.exports = async (req, res) => {
       return res.status(200).json({ ...(await readJSON('coach/plan.json', {})), reviews: await readJSON('coach/reviews.json', {}), goal: CONFIG.goal, form: form(), numbers: numbers(await readJSON('runs/all.json', []), CONFIG.goal, new Date().toISOString().slice(0, 10)) });
     }
     if (req.method !== 'POST') return res.status(405).json({ error: 'method not allowed' });
-    if (!process.env.ANTHROPIC_API_KEY) return res.status(200).json({ error: 'ANTHROPIC_API_KEY not set' });
+    if (!process.env.ANTHROPIC_API_KEY) return res.status(503).json({ error: 'The coach is not set up: ANTHROPIC_API_KEY is missing on the server.' });
     const b = typeof req.body === 'string' ? JSON.parse(req.body || '{}') : (req.body || {});
     const runs = await readJSON('runs/all.json', []), checkins = await readJSON('runs/checkins.json', []);
     const today = new Date().toISOString().slice(0, 10);
@@ -136,7 +136,8 @@ module.exports = async (req, res) => {
       console.error('coach reply rejected:', err.message);
       return res.status(502).json({ error: "The coach's reply could not be used. Try again." });
     }
+    // The full error (which can include the upstream API's message) stays in the server log.
     console.error('coach failed', err);
-    return res.status(500).json({ error: 'coach failed: ' + err.message });
+    return res.status(500).json({ error: 'The coach could not answer just now. Try again in a minute.' });
   }
 };

@@ -78,3 +78,20 @@ test('a screenshot reply with an impossible date is rejected with a 502', async 
   const res = await post({ action: 'read', image: 'data:image/png;base64,AAAA' });
   assert.equal(res.code, 502);
 });
+
+test('a missing API key is a 503 with a clear message, not a 200', async () => {
+  delete process.env.ANTHROPIC_API_KEY;
+  const res = await post({ action: 'plan' });
+  assert.equal(res.code, 503);
+  assert.match(res.body.error, /ANTHROPIC_API_KEY/);
+});
+
+test('an upstream API error is logged on the server and the client gets a generic message', async () => {
+  const logged = [];
+  console.error = (...a) => logged.push(a.map(String).join(' '));
+  global.fetch = async () => ({ ok: false, status: 400, json: async () => ({ error: { message: 'secret upstream detail' } }) });
+  const res = await post({ action: 'ask', question: 'How far today?' });
+  assert.equal(res.code, 500);
+  assert.doesNotMatch(res.body.error, /secret upstream detail/);
+  assert.ok(logged.some((l) => /secret upstream detail/.test(l)), 'the real error was not logged');
+});
