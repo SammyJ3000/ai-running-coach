@@ -183,6 +183,8 @@ All calls need the `x-app-key` header.
 - `GET /api/coach`: the plan, the rule changes, the knee status, reviews, the goal, the form analysis and the numbers block.
 - `POST /api/coach`: `{ action: 'plan' }`, `{ action: 'review', runId }`, `{ action: 'ask', question }` or `{ action: 'read', image }`.
 
+Errors come back as `{ error }` with a status code: 401 for a wrong key, 503 when a key is missing on the server, 502 when the model's reply fails its checks, and 500 with a generic message for anything else (the details stay in the server log).
+
 ## Stack
 
 - React 18 and Babel standalone from a CDN, in one `index.html`, with no build step. Installable as a home screen app. One file and no build was a deliberate choice for a one person app: it deploys as static files plus two functions, with nothing to compile.
