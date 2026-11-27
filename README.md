@@ -4,6 +4,8 @@ I built a personal running coach to get myself back to my 5K best after a knee i
 
 ![AI running coach on a phone: today's session, the two week plan and the running form screen, all with a fictional runner's data](docs/images/preview.png)
 
+*Screenshots use fictional demo data.*
+
 The runner profile in this repo (Alex) is fictional. This is a personal project, not medical advice. If you are coming back from an injury, follow your physio.
 
 ## How it works
