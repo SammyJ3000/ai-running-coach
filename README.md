@@ -39,7 +39,7 @@ The runner profile in this repo (Alex) is fictional. This is a personal project,
      and returns a list of what it changed and why
                            │
                            ▼
-          stored plan  →  index.html (Today, Plan, Runs, Form)
+          stored plan  →  the app in js/ (Today, Plan, Runs, Form)
 ```
 
 The form analysis runs on my laptop, not on the server:
@@ -104,7 +104,7 @@ These come from the project's build log and eval log.
 - **The live "write the plan" call failed with ENOENT on `prompts/plan.md`.** The `.vercelignore` entry for the root `PLAN.md` was not anchored, so it also matched `prompts/plan.md` and the prompt never deployed. Fixed by anchoring root only entries with a leading slash.
 - **An evening run on the plan date counted as no run at all.** `longest30` counted runs only up to 12:00 UTC on the plan date, so a run that evening read as "0 km in 30 days". It now counts the whole day.
 - **A stored plan told the runner to walk above a heart rate that was higher than the easy cap.** The prompts now tie every "walk if heart rate goes over" line to the session's `hr_cap`, and `enforce()` clamps `hr_cap` itself.
-- **The first real plan broke the Today screen.** It had been designed on short sample text. Real sessions came through as a paragraph squeezed beside a large number, and text ran under the tab bar. Today now has three states picked from the data (run done, rest day, run day), and `readSession` in `index.html` reads the coach's sentence ("Run 4 min, walk 1 min, x5") into steps drawn as a shape. Anything it can't read falls back to a simple effort bar.
+- **The first real plan broke the Today screen.** It had been designed on short sample text. Real sessions came through as a paragraph squeezed beside a large number, and text ran under the tab bar. Today now has three states picked from the data (run done, rest day, run day), and `readSession` in `js/sessions.js` reads the coach's sentence ("Run 4 min, walk 1 min, x5") into steps drawn as a shape. Anything it can't read falls back to a simple effort bar.
 - **Apple Health had no runs in it.** The watch only records a run when a workout is started, and its phone app needs permission to write to Health. As a backup the app now reads a screenshot of the watch app's run summary with Claude vision, and runs can be typed in.
 - **The skeleton overlay carried the wrong branding.** The renderer had my personal brand's wordmark and colours baked in. It now draws in the app's own style, and every video and still was redrawn from the saved analysis with `rerender.py`. The metrics files' checksums were unchanged.
 - **The first full eval round found invented facts.** Round 1 on the private exam (84 questions) passed 78, with 4 answers containing invented facts and none unsafe. After three rounds of playbook fixes, each retesting the failures plus 10 random earlier passes, every question's latest graded answer passed. The API credit ran out during round 4, so there was no fresh full run after the last edits. Total spend was about $15.50.
@@ -115,6 +115,32 @@ These come from the project's build log and eval log.
 - **The real exam.** Those questions were written from the same books. `evals/exam.md` has seven original example questions in the same format, including two hallucination traps, so the harness still runs.
 - **Personal data.** No real runs, health data, gait videos or landmarks. `config.json` and `form/example-summary.json` are fictional examples.
 - **Design tooling.** The screenshot and icon sheet scripts I used while designing the app.
+
+## Where things are
+
+```
+index.html          the page: markup, and the scripts in the order they run
+css/app.css         all the styles
+js/                 the phone app (React, no build step)
+  format.js         times, dates, distances and splits
+  sessions.js       reads the coach's sessions into steps, and works out what Today shows
+  api.js            calls to /api/runs and /api/coach
+  motion.js         springs, the animation clock and haptics
+  components/       shared pieces: the bottom sheet, numbers that count up, the session view
+  screens/          one file per tab (Today, Plan, Runs, Form), plus the passphrase screen
+  app.jsx           tabs, data loading and startup
+api/                the two serverless functions
+lib/                knee rules, run detection, pace maths, reply parsing and storage, used by api/ and the tests
+prompts/            the coach's playbook and the prompt for each action
+config.json         the runner's goal and the models
+form/               the Python form analysis pipeline
+evals/              the example exam and the adversarial plans
+executions/         the dev server, the eval runner and deploy helpers
+tests/              node:test suites
+docs/               the iPhone Shortcut guide and images
+```
+
+The files in `js/` are plain browser scripts that run in the order `index.html` lists them and share one scope. Babel in the browser cannot load JSX through `import`, so each file names what it uses from earlier files in a `/* global */` comment and what it provides in an `/* exported */` comment. ESLint fails on any name a file uses without listing it, and `tests/browser-scripts.test.js` checks that every listed name comes from a file loaded earlier.
 
 ## Setup and run
 
@@ -135,8 +161,8 @@ To use your own runner, edit the `goal` block in `config.json`. The models are s
 ### Tests and lint
 
 ```bash
-npm test                  # knee rules, adversarial plans, pace maths, run detection, the API handlers
-npm run lint              # ESLint on the server code, scripts and tests
+npm test                  # knee rules, adversarial plans, pace maths, run detection, the API handlers, the browser script order
+npm run lint              # ESLint on the server code, the browser app, scripts and tests
 cd form && pip install -r requirements-dev.txt && ruff check . && python -m unittest discover tests   # the form scripts and the gait maths
 ```
 
@@ -187,7 +213,7 @@ Errors come back as `{ error }` with a status code: 401 for a wrong key, 503 whe
 
 ## Stack
 
-- React 18 and Babel standalone from a CDN, in one `index.html`, with no build step. Installable as a home screen app. One file and no build was a deliberate choice for a one person app: it deploys as static files plus two functions, with nothing to compile.
+- React 18 and Babel standalone from a CDN, with no build step: Babel compiles the `.jsx` files in the browser. Installable as a home screen app. No build was a deliberate choice for a one person app: it deploys as static files plus two functions, with nothing to compile.
 - Vercel serverless functions in Node 22, with Vercel Blob for storage.
 - Anthropic Messages API called with `fetch`, with prompt caching and vision.
 - Python with MediaPipe, OpenCV, NumPy, Pillow and ffmpeg for the form analysis.
