@@ -195,4 +195,6 @@ Errors come back as `{ error }` with a status code: 401 for a wrong key, 503 whe
 
 ## About me
 
-I'm Sam Jordan. I design and build apps and AI tools with Claude Code. More of my work: https://sam-jordan-cv.vercel.app
+I'm Sam Jordan. I design and build apps and AI tools. More of my work: https://sam-jordan-cv.vercel.app
+
+This repo was published from a private working copy, so earlier history is not included.
