@@ -11,11 +11,14 @@
     "lint": "eslint ."
   },
   "dependencies": {
-    "@vercel/blob": "^2.8.2"
+    "@vercel/blob": "^2.9.0"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
     "eslint": "^10.16.0",
     "globals": "^17.14.0"
+  },
+  "overrides": {
+    "zod": "^4.6.6"
   }
 }
