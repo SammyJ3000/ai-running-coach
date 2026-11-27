@@ -31,4 +31,4 @@ Reply with JSON only, in this shape:
       ] }
   ]
 }
-Include rest days as sessions with type "rest". Two weeks, starting tomorrow.
+Include rest days as sessions with type "rest". For rest and cross sessions, name the activity in the title (for example "Rest" or "Easy bike") and set km to null. Two weeks, starting tomorrow.

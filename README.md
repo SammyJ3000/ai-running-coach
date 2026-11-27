@@ -57,12 +57,14 @@ The form analysis runs on my laptop, not on the server:
 
 The coach writes the plan as JSON. Before it is saved, `enforce()` in `lib/rules.js` walks every session and changes any that break the rules:
 
-- No run more than 10% longer than the longest run in the last 30 days, or 3 km if there were none. The check runs over real runs plus the plan's own earlier sessions, so the cap builds week by week inside the plan too.
-- No quality sessions (tempo, intervals, hills and so on) until three pain free weeks, then at most one a week.
+- First, `validatePlan()` checks the shape: weeks of sessions, each with a date, a type and a title, and numbers (or nothing) for distance, minutes and heart rate cap. A reply that fails is rejected and never saved.
+- No run more than 10% longer than the longest run in the last 30 days, or 3 km if there were none. The check runs over real runs plus the plan's own earlier sessions, so the cap builds week by week inside the plan too. A run planned in minutes only is held to the same cap, turned into minutes at the runner's usual pace (the median of their last ten runs).
+- No quality sessions (tempo, intervals, hills, time trials and so on) until three pain free weeks, then at most one a week.
 - If the latest knee check in shows swelling, high pain, soreness that lasted 48 hours, or pain above the everyday baseline, every run that day becomes a walk.
-- Heart rate caps on easy runs are clamped to 76% of max during the comeback, then 79%.
+- Every run gets a heart rate cap: 76% of max during the comeback, then 79%. A higher cap is clamped and a missing one is added.
+- Only the session types in the plan prompt count. A session with any other type, or one labelled rest or cross training whose title reads as a run, is checked as a run.
 
-Each change comes back as a plain sentence, for example `2027-01-10: 8 km → 5.5 km (no run more than 10% longer than your longest in 30 days)`, and the Plan tab shows them. However the model words a plan, it cannot get past these rules. The prompts tell the model the rules too, so that in practice very little gets cut.
+Each change comes back as a plain sentence, for example `2027-01-10: 8 km → 5.5 km (no run more than 10% longer than your longest in 30 days)`, and the Plan tab shows them. Every session is checked as a run unless it is both labelled and titled as a rest day or cross training (such as a bike ride), so the model cannot word its way past the rules. The prompts tell the model the rules too, so that in practice very little gets cut.
 
 The same split runs through the rest of the app. The model never works out paces or heart rate zones. `lib/paces.js` calculates fitness (VDOT, from the Daniels and Gilbert equations), training paces, race predictions and zones, and the prompts tell the model to quote those numbers. Run detection from raw Apple Health samples is plain code too (`lib/runs.js`).
 
