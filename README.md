@@ -1,5 +1,7 @@
 # AI running coach
 
+[![CI](https://github.com/SammyJ3000/ai-running-coach/actions/workflows/ci.yml/badge.svg)](https://github.com/SammyJ3000/ai-running-coach/actions/workflows/ci.yml)
+
 I built a personal running coach to get myself back to my 5K best after a knee injury. It reads my runs from Apple Health, measures my running form from phone video, and uses Claude to write a two week plan, review each run and answer questions. The model writes the plan, but it never has the last word on safety: deterministic knee rules in code check every session before I see it. An LLM as judge eval harness tests the coach for wrong answers and invented facts. It is a phone web app with no build step, two serverless functions and a local Python vision pipeline.
 
 ![AI running coach on a phone: today's session, the two week plan and the running form screen, all with a fictional runner's data](docs/images/preview.png)
@@ -111,7 +113,7 @@ These come from the project's build log and eval log.
 
 ## Setup and run
 
-You need Node 20 or later. The form pipeline also needs Python 3.12 and ffmpeg.
+You need Node 22 or later. The form pipeline also needs Python 3.12 and ffmpeg.
 
 ### The app, locally
 
@@ -179,7 +181,7 @@ All calls need the `x-app-key` header.
 ## Stack
 
 - React 18 and Babel standalone from a CDN, in one `index.html`, with no build step. Installable as a home screen app. One file and no build was a deliberate choice for a one person app: it deploys as static files plus two functions, with nothing to compile.
-- Vercel serverless functions in Node 20, with Vercel Blob for storage.
+- Vercel serverless functions in Node 22, with Vercel Blob for storage.
 - Anthropic Messages API called with `fetch`, with prompt caching and vision.
 - Python with MediaPipe, OpenCV, NumPy, Pillow and ffmpeg for the form analysis.
 - Apple Health through an iPhone Shortcut.
